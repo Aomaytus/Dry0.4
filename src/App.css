@@ -1,0 +1,101 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  font-size: calc(10px + 2vmin);
+  color: rgb(0, 0, 0);
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.value_home {
+  background-color: #f3f3f3;
+  width: 90%;
+  height: auto;
+  border: 0;
+  border-radius: 20px;
+  margin: 2px;
+  padding: 5px;
+  justify-content: space-around;
+}
+.ant-tabs-nav-wrap {
+  justify-content: center;
+}
+
+.slick-dots li button {
+
+  height: 1px;
+  margin-top: 20px;
+}
+
+.slick-dots li button::after {
+  background-color: #fc5353;
+
+  height: 5px; 
+  border-radius: 3px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+.slick-dots{
+  background-color: #ffffff00;
+  color: #ffffff00;
+}
+.ant-tabs-tabpane{
+  background-color: rgb(255, 255, 255);
+  justify-content: center;
+  align-items: center;
+
+}
+.ant-image{
+  margin-right: 10px;
+  margin-left: 10px;
+}
+.ant-popover{
+  width: 90%;
+  padding-right: 1px;
+  padding-left: 10px;
+}
+.ant-input-number{
+  width: 50px;
+}
+.ant-btn-primary{
+  background-color: #fc5353;
+}
+.ant-btn-primary::after{
+background-color: #fc5353;
+}
+.ant-btn-primary:not(:disabled):hover{
+  background-color: #fc5353;
+}
+.ant-checkbox+span{
+  width: 100px;
+}
