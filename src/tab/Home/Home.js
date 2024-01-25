@@ -15,7 +15,7 @@ const Home = () => {
   const onChange = (currentSlide) => {
     console.log(currentSlide);
   };
-
+// new
   return (
 
     <div className="body">
