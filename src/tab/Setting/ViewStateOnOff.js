@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Switch, Button } from "antd";
 import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
 
@@ -25,10 +24,9 @@ const ViewStateOnOff = () => {
       }
     });
   }, []);
-
   return (
     <div>
-      <div className="">สถานะ โหมดการควบคุม {State_Io}</div>
+      <div style={{marginLeft:"10px"}}>สถานะ โหมดการควบคุม {State_Io}</div>
     </div>
   );
 };

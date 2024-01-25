@@ -1,62 +1,35 @@
-import { useState } from "react";
-import { Image } from "antd";
-import { Button, Popconfirm } from "antd";
-import Add from "./Add";
-import Temp from "./Temp";
-import Humidity from "./Humidity";
-import Time from "./Time";
-import Staple from "./Staple";
-import AddWeighing1 from "./AddWeighing1";
-import StapleValue1 from "./StapleValue1";
-import StateOnOff from "../Setting/StateOnOff";
+import { Button, Popconfirm, Modal } from "antd";
+import AddWeighing2 from "./AddWeighing2";
+import StartOnOffWeigh2 from "../Setting/StartOnOffWeigh2";
 import StapleValue2 from "./StapleValue2";
 const Dry2 = () => {
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
-  const showPopconfirm = () => {
-    setOpen(true);
+  const warning = () => {
+    Modal.warning({
+      title: 'กำหนดค่าชุดชั่งน้ำหนัก',
+      content: (
+        <div>
+           <AddWeighing2 />
+        </div>
+      ),
+      onOk() { },
+      cancelText: 'ออก',
+      okText: 'ออก',
+      okType: 'danger',
+    });
   };
-  const edited = () => {
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
-  };
-  const handleCancel = () => {
-    console.log("Clicked cancel button");
-    setOpen(false);
-  };
-
   return (
     <div>
       <div className="value_home">
         <div className="dry-body">
+          <div style={{ display: "flex", justifyContent: "end" }}>
+          <Button type="primary" onClick={warning}> แก้ไข</Button>
+          </div>
           <div className="toggle">
             <Button style={{ display: "flex" }}>
               เปิด ปิดชุดชั่งน้ำหนักที่ 2
-              <StateOnOff />
+              <StartOnOffWeigh2 />
             </Button>
           </div>
-
-          <div style={{ display: "flex", justifyContent: "end" }}>
-            <Button type="primary" onClick={showPopconfirm}>
-              แก้ไข
-            </Button>
-            <Popconfirm
-              placement="left"
-              title="กำหนดค่าตากแห้ง"
-              description={<AddWeighing1 />}
-              open={open}
-              onConfirm={edited}
-              okButtonProps={{
-                loading: confirmLoading,
-              }}
-              onCancel={handleCancel}
-            ></Popconfirm>
-          </div>
-
           <StapleValue2 />
         </div>
       </div>

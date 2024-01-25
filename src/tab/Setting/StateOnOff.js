@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
 import { Switch } from "antd";
-var Sw;
 const StateOnOff = () => {
-  const [todo, setTodo] = useState();
+ const [disabled, setDisabled] = useState(); 
+ const [todo, setTodo] = useState();
   const [todos, setTodos] = useState();
-  const [disabled, setDisabled] = useState();
+  
   useEffect(() => {
     onValue(ref(db), (snapshot) => {
       setTodos([]);
       const data = snapshot.val();
       var ST_IO = data.Fram.State_Io;
-      if (ST_IO == 1) {
+      if (ST_IO == 1 || ST_IO==2) {
         setDisabled(true);
       } else {
         setDisabled(false);

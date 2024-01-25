@@ -1,24 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {
-  Progress,
-  Space,
-  Modal,
-  Button,
-  Col,
-  InputNumber,
-  Row,
-  Slider,
   Image,
-  Carousel,
 } from "antd";
-import StateOnOff from "../Setting/StateOnOff";
 import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
 var State_Weighing2 = 0,
   Weighing2Before = 0,
   Weighing2Behind = 0,
   Weighing2Percent = 0,
-  Weighing2Type = 0;
+  Weighing2Type = 0,
+  scale2 = 0;
 
 const Weighing2 = () => {
   const [todo, setTodo] = useState();
@@ -29,9 +20,15 @@ const Weighing2 = () => {
     onValue(ref(db), (snapshot) => {
       setTodos([]);
       const data = snapshot.val();
-      State_Weighing2 = data.Fram.State_Weighing2;
-      Weighing2Before = data.Fram.Weighing2Before;
-      Weighing2Behind = data.Fram.Weighing2Behind;
+      State_Weighing2 = data.Fram.State_Io_Weigh2;
+      scale2 = data.Fram.scale2;
+      if (scale2 == 1) {
+        Weighing2Before = data.Fram.Weighing2BeforeSet;
+        Weighing2Behind = data.Fram.Weighing2Behind;
+        if (Weighing2Before >= 0.0 ) {
+          setWeighingState("ข้อมูลผิดพลาด");
+        } 
+      } 
       Weighing2Percent = data.Fram.Weighing2Percent;
       Weighing2Type = data.Fram.Weighing2Type;
       if (State_Weighing2 >= 1) {

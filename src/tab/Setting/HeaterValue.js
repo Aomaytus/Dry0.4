@@ -1,43 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
-
-import {
-  Progress,
-  Space,
-  Modal,
-  Button,
-  Col,
-  InputNumber,
-  Row,
-  Slider,
-  Image,
-  Carousel,
-} from "antd";
+import { Button, Col, InputNumber, Row, Slider } from "antd";
 const HeaterValue = () => {
-  const [checked1, setChecked1] = useState(true);
-  const toggleChecked1 = () => {
-    setChecked1(true);
-    setChecked1(false);
-  };
+  const [todos, setTodos] = useState();
+  useEffect(() => {
+    onValue(ref(db), (snapshot) => {
+      setTodos([]);
+      const data = snapshot.val();
+      setHeaterPercentage(data.Fram.HeaterPercentage);
+      if (data !== null) {
+        Object.values(data).map((todo) => {
+          setTodos((oldArray) => [...oldArray, todo]);
+        });
+      }
+    });
+  }, []);
   const [HeaterPercentage, setHeaterPercentage] = useState(50);
-  const onChange1 = (newValue) => {
+  const heaterset = (newValue) => {
     setHeaterPercentage(newValue);
-    console.log("HeaterPercentage " + HeaterPercentage);
-    // var HeaterPercentage = HeaterPercentage;
-    
   };
-  update(ref(db, `Fram`), {
+  function setup() {
+    update(ref(db, `Fram`), {
       HeaterPercentage,
     });
+  }
   return (
     <div>
       <Row>
         <Col span={12}>
           <Slider
             min={0}
-            max={99}
-            onChange={onChange1}
+            max={100}
+            onChange={heaterset}
             value={typeof HeaterPercentage === "number" ? HeaterPercentage : 1}
             step={1}
           />
@@ -45,22 +40,19 @@ const HeaterValue = () => {
         <Col span={4}>
           <InputNumber
             min={0}
-            max={99}
+            max={100}
             style={{
               margin: "0 16px",
             }}
             value={HeaterPercentage + "%"}
-            onChange={onChange1}
+            onChange={heaterset}
           />
         </Col>
       </Row>
-      <p style={{ marginTop: "1px", marginBottom: "20px" }}></p>
-      <p>
-        <Button>รีเซ็ต</Button>
-       
-      </p>
+      <Button onClick={setup} type="primary">
+        บันทึก
+      </Button>
     </div>
   );
 };
-
 export default HeaterValue;

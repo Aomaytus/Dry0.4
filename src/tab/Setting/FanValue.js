@@ -1,36 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
-
 import {
-  Progress,
-  Space,
-  Modal,
   Button,
   Col,
   InputNumber,
   Row,
   Slider,
-  Image,
-  Carousel,
 } from "antd";
-const FanValue = () => {
-  const [checked1, setChecked1] = useState(true);
-  const toggleChecked1 = () => {
-    setChecked1(true);
-    setChecked1(false);
-  };
-  const [FanPercentage, setFanPercentage] = useState(50);
-  const onChange1 = (newValue) => {
-    setFanPercentage(newValue);
-    console.log("FanPercentage " + FanPercentage);
-    // var FanPercentage = FanPercentage;
-   
-  };
 
-  update(ref(db, `Fram`), {
+const FanValue = () => {
+  const [todos, setTodos] = useState();
+  useEffect(() => {
+    onValue(ref(db), (snapshot) => {
+      setTodos([]);
+      const data = snapshot.val();
+      setFanPercentage(data.Fram.FanPercentage);
+    });
+  }, []);
+  const [FanPercentage, setFanPercentage] = useState(50);
+  const setup = () => {
+    update(ref(db, `Fram`), {
       FanPercentage,
     });
+  }
+  const fanset = (newValue) => {
+    setFanPercentage(newValue);
+  };
   return (
     <div>
       <Row>
@@ -38,7 +34,7 @@ const FanValue = () => {
           <Slider
             min={0}
             max={100}
-            onChange={onChange1}
+            onChange={fanset}
             value={typeof FanPercentage === "number" ? FanPercentage : 1}
             step={1}
           />
@@ -51,15 +47,11 @@ const FanValue = () => {
               margin: "0 16px",
             }}
             value={FanPercentage + "%"}
-            onChange={onChange1}
+            onChange={fanset}
           />
         </Col>
       </Row>
-      <p style={{ marginTop: "1px", marginBottom: "20px" }}></p>
-      <p>
-        <Button>รีเซ็ต</Button>
-        
-      </p>
+      <Button onClick={setup} type="primary">บันทึก</Button>
     </div>
   );
 };

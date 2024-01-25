@@ -1,14 +1,5 @@
 import { useState } from "react";
 import {
-  Progress,
-  Space,
-  Modal,
-  Button,
-  Col,
-  InputNumber,
-  Row,
-  Slider,
-  Image,
   Carousel,
 } from "antd";
 import Time from "../Dry/Time";
@@ -17,28 +8,27 @@ import Temp from "../Dry/Temp";
 import TempHumidityOut from "./TempHumidityOut";
 import TempHumidityIn from "./TempHumidityIn";
 import StatusIO from "./StatusIO";
-import Weighing1 from "./Weighing1";
-import Weighing2 from "./Weighing2";
 import ViewStateOnOff from "../Setting/ViewStateOnOff";
+import StapleValue1 from "../Dry/StapleValue1";
+import StapleValue2 from "../Dry/StapleValue2";
 const Home = () => {
   const onChange = (currentSlide) => {
     console.log(currentSlide);
   };
 
   return (
-    <div>
-      <div>
-        <div className="value_home">
-          <div>
-            <TempHumidityOut />
-          </div>
-          <TempHumidityIn />
+
+    <div className="body">
+      <div className="value_home">
+        <div>
+          <TempHumidityOut />
         </div>
-        <div className="value_home">
-          <p>
-            <StatusIO />
-          </p>
-        </div>
+        <TempHumidityIn />
+
+
+        <StatusIO />
+
+
         <div className="dry-body">
           <div className="BT_View_ON_OFF">ค่าควมคุมการตากแห้ง</div>
 
@@ -56,14 +46,18 @@ const Home = () => {
             <ViewStateOnOff />
           </div>
         </div>
-        <div className="value_home">
-          <Carousel afterChange={onChange}>
-            <Weighing1 />
-            <Weighing2 />
-          </Carousel>
-        </div>
+       
+         <div className="dry-body">
+           <Carousel afterChange={onChange}>
+          <StapleValue1 />
+          <StapleValue2 />
+        </Carousel>
+         </div>
+         
+       
       </div>
     </div>
+
   );
 };
 

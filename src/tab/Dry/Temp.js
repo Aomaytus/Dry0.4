@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,createContext } from "react";
 import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
 import { Image } from "antd";
-
-var TempSet;
+let TempSet;
 const Temp = () => {
   const [todo, setTodo] = useState();
   const [todos, setTodos] = useState();
@@ -12,7 +11,9 @@ const Temp = () => {
       setTodos([]);
       const data = snapshot.val();
       TempSet = data.Fram.TempSet;
-
+      if (TempSet <= 0 || TempSet >= 80) {
+        TempSet = 0;
+      }
       if (data !== null) {
         Object.values(data).map((todo) => {
           setTodos((oldArray) => [...oldArray, todo]);
@@ -20,8 +21,12 @@ const Temp = () => {
       }
     });
   }, []);
+  
+  
   return (
     <div>
+     
+     
       <div style={{ display: "flex", width: "100%" }}>
         <div>
           <Image
@@ -35,5 +40,6 @@ const Temp = () => {
     </div>
   );
 };
+
 
 export default Temp;

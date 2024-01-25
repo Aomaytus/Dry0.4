@@ -4,9 +4,9 @@ import { set, ref, onValue, update, remove } from "firebase/database";
 import { Image } from "antd";
 var State_Weighing2 = 0,
   Weighing2Before = 0,
-  Weighing2Behind = 0,
-  Weighing2Percent = 0,
-  Weighing2Type = 0;
+  Weighing2BehindSet = 0,
+  Weighing2Type = 0,
+  averageWeight_2 = 0;
 const StapleValue2 = () => {
   const [todo, setTodo] = useState();
   const [todos, setTodos] = useState();
@@ -16,11 +16,19 @@ const StapleValue2 = () => {
     onValue(ref(db), (snapshot) => {
       setTodos([]);
       const data = snapshot.val();
-      State_Weighing2 = data.Fram.State_Weighing2;
-      Weighing2Before = data.Fram.Weighing2Before;
-      Weighing2Behind = data.Fram.Weighing2Behind;
-      Weighing2Percent = data.Fram.Weighing2Percent;
-      Weighing2Type = data.Fram.Weighing2Type;
+
+      Weighing2Before = data.Fram.Weighing2BeforeSet / 1000;
+    
+      Weighing2BehindSet = data.Fram.Weighing2BehindSet / 1000;
+      averageWeight_2 = data.Fram.averageWeight_2 /1000;
+      if (averageWeight_2 > Weighing2Before) {
+        averageWeight_2 = Weighing2Before;
+      }
+      
+
+      
+      Weighing2Type = (data.Fram.Weighing2Type)/1000;
+
       if (State_Weighing2 >= 1) {
         setWeighingState("เปิด");
       } else {
@@ -31,6 +39,7 @@ const StapleValue2 = () => {
       } else {
         setWeighingType("หมู");
       }
+
       // HeaterPercentage = data.Fram.HeaterPercentage;
       if (data !== null) {
         Object.values(data).map((todo) => {
@@ -56,7 +65,7 @@ const StapleValue2 = () => {
             preview={false}
             src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
           />
-          น้ำหนักก่อนตาก {Weighing2Before} กก.
+          น้ำหนักก่อนตาก { Weighing2Before.toFixed(2)} กก.
         </div>
         <div>
           <Image
@@ -64,11 +73,18 @@ const StapleValue2 = () => {
             preview={false}
             src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
           />
-          น้ำหนักหลังตาก {Weighing2Behind} กก.
+          น้ำหนักหลังตาก {Weighing2BehindSet.toFixed(2)} กก.
+        </div>
+        <div>
+          <Image
+            width={20}
+            preview={false}
+            src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
+          />
+          น้ำหนักปัจจุบัน {averageWeight_2.toFixed(2)} กก.
         </div>
       </div>
     </div>
   );
 };
-
 export default StapleValue2;

@@ -2,51 +2,48 @@ import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
 import { Col, InputNumber, Row, Slider, Space } from "antd";
-
+import axios from 'axios';
 import { Image } from "antd";
-
+var h=0;
 const SetValue = () => {
-  const [todo, setTodo] = useState();
+  
   const [todos, setTodos] = useState();
+  const [todo, setTodo] = useState();
+  const [todos2, setTodos2] = useState();
+  const [currentTime, setCurrentTime] = useState(new Date());
+
   useEffect(() => {
+  
+     // เรียกใช้งาน WorldTimeAPI เพื่อดึงเวลาปัจจุบัน
+     axios.get("http://worldtimeapi.org/api/ip").then((response) => {
+      const { datetime } = response.data;
+      setCurrentTime(new Date(datetime));
+    });
+
     onValue(ref(db), (snapshot) => {
       setTodos([]);
       const data = snapshot.val();
-      // FanPercentage = data.Fram.FanPercentage;
-      // HeaterPercentage = data.Fram.HeaterPercentage;
       if (data !== null) {
         Object.values(data).map((todo) => {
           setTodos((oldArray) => [...oldArray, todo]);
         });
       }
     });
+
   }, []);
 
-  const [checked1, setChecked1] = useState(true);
-  const [checked2, setChecked2] = useState(true);
-  const toggleChecked1 = () => {
-    setChecked2(true);
-    setChecked1(false);
-  };
-  const toggleChecked2 = () => {
-    setChecked1(true);
-    setChecked2(false);
-  };
-
-  const [inputValue, setInputValue] = useState(40);
+  const [inputValueTemp, setinputValueTemp] = useState(40);
   const onChange = (newValue) => {
-    setInputValue(newValue);
+    setinputValueTemp(newValue);
   };
-  const [inputValue1, setInputValue1] = useState(45);
+  const [inputValueTempHum, setinputValueTempHum] = useState(45);
   const onChange1 = (newValue) => {
-    setInputValue1(newValue);
+    setinputValueTempHum(newValue);
   };
-  console.log(inputValue);
-  console.log(inputValue1);
-  var TempSet = inputValue;
-  var HumSet=inputValue1;
 
-  update(ref(db, `Fram`), { TempSet,HumSet });
+  var TempSet = inputValueTemp;
+  var HumSet = inputValueTempHum;
+  update(ref(db, `Fram`), { TempSet, HumSet });
 
   const HMStart = (value) => {
     var HmStart = value;
@@ -65,10 +62,10 @@ const SetValue = () => {
   };
   const MINStop = (value) => {
     var MinStop = value;
+
     update(ref(db, `Fram`), { MinStop });
     console.log("changed", value);
   };
-  update(ref(db, `Fram`), {});
   return (
     <div>
       <div>
@@ -81,13 +78,20 @@ const SetValue = () => {
           กำหนดเวลาการตากแห้ง
         </div>
         <div>
-          <div>เริ่มทำงาน</div>
+          <div
+            style={{
+              margin: "5px 0px",
+            }}
+          >
+            เริ่มทำงาน
+          </div>
           <InputNumber
             min={0}
             max={24}
             defaultValue={0}
             prefix="ชั่วโมง:"
             onChange={HMStart}
+            style={{marginRight:"10px"}}
           />
           :
           <InputNumber
@@ -96,14 +100,22 @@ const SetValue = () => {
             defaultValue={0}
             prefix="นาที:"
             onChange={MINStart}
+            style={{marginLeft:"10px"}}
           />
-          <div>หยุดทำงาน</div>
+          <div
+            style={{
+              margin: "5px 0px",
+            }}
+          >
+            หยุดทำงาน
+          </div>
           <InputNumber
             min={0}
             max={24}
             defaultValue={0}
             prefix="ชั่วโมง:"
             onChange={HMStop}
+            style={{marginRight:"10px"}}
           />
           :
           <InputNumber
@@ -112,6 +124,7 @@ const SetValue = () => {
             defaultValue={0}
             prefix="นาที:"
             onChange={MINStop}
+            style={{marginLeft:"10px"}}
           />
         </div>
       </div>
@@ -119,6 +132,9 @@ const SetValue = () => {
         <Image
           width={30}
           preview={false}
+          style={{
+            margin: "10px 0px",
+          }}
           src="https://cdn-icons-png.flaticon.com/512/2100/2100100.png"
         />{" "}
         กำหนดอุณหภูมิควบคุม
@@ -128,14 +144,17 @@ const SetValue = () => {
               min={30}
               max={70}
               onChange={onChange}
-              value={typeof inputValue === "number" ? inputValue : 40}
+              value={typeof inputValueTemp === "number" ? inputValueTemp : 40}
             />
           </Col>
           <Col span={4}>
             <InputNumber
               min={30}
               max={70}
-              value={inputValue}
+              style={{
+                margin: "0px 10px",
+              }}
+              value={inputValueTemp}
               onChange={onChange}
             />
           </Col>
@@ -154,7 +173,7 @@ const SetValue = () => {
               min={10}
               max={50}
               onChange={onChange1}
-              value={typeof inputValue1 === "number" ? inputValue1 : 40}
+              value={typeof inputValueTempHum === "number" ? inputValueTempHum : 40}
             />
           </Col>
           <Col span={4}>
@@ -162,9 +181,9 @@ const SetValue = () => {
               min={10}
               max={50}
               style={{
-                margin: "0 16px",
+                margin: "0px 10px",
               }}
-              value={inputValue1}
+              value={inputValueTempHum}
               onChange={onChange1}
             />
           </Col>

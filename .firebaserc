@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "fdfdf-6c90b"
-  }
+    "default": "react-contact-001",
+    "y": "react-contact-001",
+    " ": "react-contact-001"
+  },
+  "targets": {},
+  "etags": {}
 }

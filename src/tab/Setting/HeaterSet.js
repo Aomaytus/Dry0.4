@@ -1,13 +1,7 @@
 import { useState } from "react";
-import { Image } from "antd";
-import { Button, Popconfirm } from "antd";
-
-import Heater from "./Heater";
+import { Button, Modal } from "antd";
 import HeaterValue from "./HeaterValue";
 const HeaterSet = () => {
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
   const showPopconfirm = () => {
     setOpen(true);
   };
@@ -16,38 +10,51 @@ const HeaterSet = () => {
     setTimeout(() => {
       setOpen(false);
       setConfirmLoading(false);
-    }, 2000);
+    }, 500);
+  };
+
+  ///////////////////////////
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [modalText, setModalText] = useState("Content of the modal");
+  const showModal = () => {
+    setOpen(true);
+  };
+  const handleOk = () => {
+    setModalText("The modal will be closed after two seconds");
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 500);
   };
   const handleCancel = () => {
     console.log("Clicked cancel button");
     setOpen(false);
   };
-
   const HeaterSetShow = () => {
     return <div>กำหนดระดับฮีตเตอร์</div>;
   };
-
+  const warning = () => {
+    Modal.warning({
+      title: "ปรับระดับความร้อนฮีตเตอร์",
+      content: (
+        <div>
+          <HeaterValue />
+        </div>
+      ),
+      onOk() {},
+      cancelText: "ออก",
+      okText: "ออก",
+      okType: "danger",
+    });
+  };
   return (
     <div>
-      <div>
-        <div>
-          <Popconfirm
-            placement="bottom"
-            title={<HeaterSetShow />}
-            description={<HeaterValue />}
-            open={open}
-            onConfirm={edited}
-            okButtonProps={{
-              loading: confirmLoading,
-            }}
-            onCancel={handleCancel}
-          >
-            <Button type="primary" onClick={showPopconfirm}>
-              แก้ไข
-            </Button>
-          </Popconfirm>
-        </div>
-      </div>
+      <Button type="primary" onClick={warning}>
+        {" "}
+        ปรับระดับความร้อนฮีตเตอร์
+      </Button>
     </div>
   );
 };

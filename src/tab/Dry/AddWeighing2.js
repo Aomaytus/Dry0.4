@@ -1,27 +1,94 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, InputNumber, Row, Slider, Space } from "antd";
+import { db } from "../../firebase";
+import { set, ref, onValue, update, remove } from "firebase/database";
+
+import { Col, InputNumber, Row, Slider, Space, Button } from "antd";
 import { Checkbox } from "antd";
 import { Image } from "antd";
 
+var auto_set = 0;
 const AddWeighing2 = () => {
-  const [checked1, setChecked1] = useState(true);
-  const [checked2, setChecked2] = useState(true);
-  const toggleChecked1 = () => {
-    setChecked2(true);
-    setChecked1(false);
+  const [todo, setTodo] = useState();
+  const [todos, setTodos] = useState();
+  useEffect(() => {
+    onValue(ref(db), (snapshot) => {
+      setTodos([]);
+      const data = snapshot.val();
+      auto_set = data.Fram.hx711_2_scale;
+
+      if (data !== null) {
+        Object.values(data).map((todo) => {
+          setTodos((oldArray) => [...oldArray, todo]);
+        });
+      }
+    });
+  }, []);
+  const [pig, setpig] = useState(true);
+  const [banana, setbanana] = useState(true);
+  const [auto, setauto] = useState(true);
+  const [autoWeigh, setautoWeigh] = useState(true);
+  const [percentage, setpercentage] = useState(70);
+  const togglepig = () => {
+    setbanana(!false);
+    setpig(!true);
+    setauto(true);
+    setautoWeigh(!true);
+    setpercentage(80);
+    var Weighing2Type = 0;
+    update(ref(db, `Fram`), {
+      Weighing2Type,
+    });
   };
-  const toggleChecked2 = () => {
-    setChecked1(true);
-    setChecked2(false);
+  const togglebanana = () => {
+    setbanana(!true);
+    setpig(!false);
+    setauto(true);
+    setautoWeigh(!true);
+    setpercentage(70);
+    var Weighing2Type = 1;
+    update(ref(db, `Fram`), {
+      Weighing2Type,
+    });
   };
-  const [inputValue1, setInputValue1] = useState(0.1);
+  const [inputValue1, setInputValue1] = useState(0);
+  const [inputValue2, setInputValue2] = useState(0);
   const onChange1 = (newValue) => {
     setInputValue1(newValue);
-    console.log("inputValue1 " + inputValue1);
+    var Weighing2BeforeSet = newValue.toFixed(2) * 1000;
+
+    update(ref(db, `Fram`), {
+      Weighing2BeforeSet,
+    });
+    console.log("inputValue1 " + newValue);
   };
-  const [inputValue2, setInputValue2] = useState(0.1);
+  
   const onChange2 = (newValue) => {
     setInputValue2(newValue);
+    var Weighing2BehindSet = (newValue* 1000).toFixed(2) ;
+    update(ref(db, `Fram`), {
+      Weighing2BehindSet,
+    });
+    console.log("inputValue2 " + newValue);
+  };
+  const autoweigh = () => {
+    setautoWeigh(!false);
+    setauto(true);
+    const Weighing2BeforeSet = parseFloat((auto_set ).toFixed(2));
+    setInputValue1(Weighing2BeforeSet/1000);
+    update(ref(db, `Fram`), {
+      Weighing2BeforeSet,
+    });
+  };
+  const autotoggle = () => {
+    setauto(false);
+    var Weighing2Type = 2;
+    var value = (((inputValue1-0.3)*1000) / 100) * percentage;
+    const Weighing2BehindSet =  parseFloat((value+300).toFixed(2)) ;
+    setInputValue2(Weighing2BehindSet/1000);
+    update(ref(db, `Fram`), {
+      Weighing2Type,
+      Weighing2BehindSet,
+    });
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,112 +97,115 @@ const AddWeighing2 = () => {
   };
 
   return (
-    <div style={{ justifyContent: "center" }}>
-      <div>
-        <p style={{ marginBottom: "-1px" }}>เลือกวัตถุดิบตากแห้ง</p>
-        <p style={{ marginLeft: "20px" }}>
-          <Row>
-            <Checkbox
-              checked={!checked1}
-              onClick={toggleChecked1}
-              style={{ marginRight: "10px" }}
-            />
-            <Col span={20}>
-              {" "}
-              เนื้อหมู
-              <Image
-                width={30}
-                preview={false}
-                src="https://cdn-icons-png.flaticon.com/512/8453/8453627.png"
-              />{" "}
-            </Col>
-
-            <Col span={20}>
-              <Checkbox
-                checked={!checked2}
-                onClick={toggleChecked2}
-                style={{ marginRight: "10px" }}
-              />
-              กล้วย
-              <Image
-                width={30}
-                preview={false}
-                src="https://cdn-icons-png.flaticon.com/512/9648/9648084.png"
-                style={{ marginLeft: "8px" }}
-              />{" "}
-            </Col>
-          </Row>
-        </p>
-        <Button type="primary">คำนวนน้ำหนักอัตโนมัติ</Button>
-        <p>
-          <Button type="text">กำหนดด้วยตนเอง</Button>
-        </p>
-
-        <p>
+    <div>
+      <p style={{ marginBottom: "-1px" }}>เลือกวัตถุดิบตากแห้ง</p>
+      <Row>
+        <Checkbox
+          checked={!pig}
+          onClick={togglepig}
+          style={{ marginRight: "10px" }}
+        />
+        <Col span={20}>
           {" "}
+          เนื้อหมู
           <Image
-            width={40}
+            width={30}
             preview={false}
-            onClick={showModal}
-            src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
+            src="https://cdn-icons-png.flaticon.com/512/8453/8453627.png"
           />{" "}
-          น้ำหนักก่อนตาก
-          <Row>
-            <Col span={12}>
-              <Slider
-                min={0.01}
-                max={50}
-                onChange={onChange1}
-                value={typeof inputValue1 === "number" ? inputValue1 : 1}
-                step={0.01}
-              />
-            </Col>
-            <Col span={4}>
-              <InputNumber
-                min={0.01}
-                max={50}
-                style={{
-                  margin: "0 16px",
-                }}
-                value={inputValue1}
-                onChange={onChange1}
-              />
-            </Col>
-          </Row>
-        </p>
-        <p>
-          {" "}
+        </Col>
+
+        <Col span={20}>
+          <Checkbox
+            checked={!banana}
+            onClick={togglebanana}
+            style={{ marginRight: "10px" }}
+          />
+          กล้วย
           <Image
-            width={40}
+            width={30}
             preview={false}
-            onClick={showModal}
-            src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
+            src="https://cdn-icons-png.flaticon.com/512/9648/9648084.png"
+            style={{ marginLeft: "8px" }}
           />{" "}
-          น้ำหลักหลังตาก
-          <Row>
-            <Col span={12}>
-              <Slider
-                min={0.01}
-                max={50}
-                onChange={onChange2}
-                value={typeof inputValue2 === "number" ? inputValue2 : 1}
-                step={0.01}
-              />
-            </Col>
-            <Col span={4}>
-              <InputNumber
-                min={0.01}
-                max={50}
-                style={{
-                  margin: "0 16px",
-                }}
-                value={inputValue2}
-                onChange={onChange2}
-              />
-            </Col>
-          </Row>
-        </p>
-      </div>
+        </Col>
+      </Row>{" "}
+      <Image
+        width={40}
+        preview={false}
+        onClick={showModal}
+        src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
+      />{" "}
+      น้ำหนักก่อนตาก
+      <Row>
+        <Col span={12}>
+          <Slider
+            min={0.1}
+            max={2}
+            onChange={onChange1}
+            value={typeof inputValue1 === "number" ? inputValue1 : 0}
+            step={0.01}
+          />
+        </Col>
+        <Col span={4}>
+          <InputNumber
+            min={0.1}
+            max={2}
+            step={0.01}
+            style={{
+              margin: "0 16px",
+            }}
+            value={inputValue1.toFixed(2)}
+            onChange={onChange1}
+          />
+        </Col>
+        <Col span={20}>
+          <Checkbox
+            checked={autoWeigh}
+            onClick={autoweigh}
+            style={{ marginRight: "10px" }}
+          />
+          น้ำหนักก่อนตากอัตโนมัต
+        </Col>
+      </Row>{" "}
+      <Image
+        width={40}
+        preview={false}
+        onClick={showModal}
+        src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
+      />{" "}
+      น้ำหลักหลังตาก
+      <Row>
+        <Col span={12}>
+          <Slider
+            min={inputValue1 / 2}
+            max={inputValue1 - 0.1}
+            onChange={onChange2}
+            value={typeof inputValue2 === "number" ? inputValue2 : 0}
+            step={0.01}
+          />
+        </Col>
+        <Col span={4}>
+          <InputNumber
+            min={0.1}
+            max={2}
+            step={0.01}
+            style={{
+              margin: "0 16px",
+            }}
+            value={inputValue2.toFixed(2)}
+            onChange={onChange2}
+          />
+        </Col>
+        <Col span={20}>
+          <Checkbox
+            checked={!auto}
+            onClick={autotoggle}
+            style={{ marginRight: "10px" }}
+          />
+          น้ำหนักหลังตากอัตโนมัต
+        </Col>
+      </Row>
     </div>
   );
 };

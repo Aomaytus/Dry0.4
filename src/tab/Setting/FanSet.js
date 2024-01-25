@@ -1,52 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../firebase";
-import { set, ref, onValue, update, remove } from "firebase/database";
-import { Image } from "antd";
-import { Button, Popconfirm } from "antd";
-import Fanter from "./Heater";
+import { Button, Popconfirm, Modal } from "antd";
 import FanValue from "./FanValue";
 const FanSet = () => {
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
   const showPopconfirm = () => {
     setOpen(true);
   };
-  const edited = () => {
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+  const [open, setOpen] = useState(false);
+  const showModal = () => {
+    setOpen(true);
   };
-  const handleCancel = () => {
-    console.log("Clicked cancel button");
-    setOpen(false);
+  const warning = () => {
+    Modal.warning({
+      title: 'ปรับระดับแรงพัดลม',
+      content: (
+        <div>
+          <FanValue />
+        </div>
+      ),
+      onOk() { },
+      cancelText: 'ออก',
+      okText: 'ออก',
+      okType: 'danger',
+    });
   };
-
-  const FanSetShow = () => {
-    return <div>กำหนดระดับพัดลมระบายอากาศ</div>;
-  };
-
   return (
     <div>
       <div>
         <div>
-          <Popconfirm
-            placement="bottom"
-            title={<FanSetShow />}
-            description={<FanValue />}
-            open={open}
-            onConfirm={edited}
-            okButtonProps={{
-              loading: confirmLoading,
-            }}
-            onCancel={handleCancel}
-          >
-            <Button type="primary" onClick={showPopconfirm}>
-              แก้ไข
-            </Button>
-          </Popconfirm>
+          <Button type="primary" onClick={warning}> ปรับระดับแรงพัดลม</Button>
         </div>
       </div>
     </div>

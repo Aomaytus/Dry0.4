@@ -3,11 +3,10 @@ import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
 import { Image } from "antd";
 var State_Weighing1 = 0,
-  Weighing1Before = 0,
-  Weighing1Behind = 0,
-  Weighing1Percent = 0,
-  Weighing1Type = 0;
-
+  Weighing1BeforeSet = 0,
+  Weighing1BehindSet=0,
+  Weighing1Type = 0,
+  averageWeight_1 = 0;
 const StapleValue1 = () => {
   const [todo, setTodo] = useState();
   const [todos, setTodos] = useState();
@@ -17,11 +16,20 @@ const StapleValue1 = () => {
     onValue(ref(db), (snapshot) => {
       setTodos([]);
       const data = snapshot.val();
-      State_Weighing1 = data.Fram.State_Weighing1;
-      Weighing1Before = data.Fram.Weighing1Before;
-      Weighing1Behind = data.Fram.Weighing1Behind;
-      Weighing1Percent = data.Fram.Weighing1Percent;
+
+      Weighing1BeforeSet = data.Fram.Weighing1BeforeSet / 1000;
+      Weighing1BehindSet = data.Fram.Weighing1BehindSet / 1000;
+      averageWeight_1 = data.Fram.averageWeight_1 / 1000;
+      if (averageWeight_1 >= Weighing1BeforeSet) {
+        averageWeight_1 = (Weighing1BeforeSet);
+      }
       Weighing1Type = data.Fram.Weighing1Type;
+
+      // State_Weighing1 = data.Fram.State_Weighing1;
+      // scale1 = data.Fram.scale1;
+      // Weighing1Behind = data.Fram.Weighing1Behind;
+      // Weighing1Percent = data.Fram.Weighing1Percent;
+
       if (State_Weighing1 >= 1) {
         setWeighingState("เปิด");
       } else {
@@ -32,6 +40,7 @@ const StapleValue1 = () => {
       } else {
         setWeighingType("หมู");
       }
+
       // HeaterPercentage = data.Fram.HeaterPercentage;
       if (data !== null) {
         Object.values(data).map((todo) => {
@@ -58,7 +67,7 @@ const StapleValue1 = () => {
             preview={false}
             src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
           />
-          น้ำหนักก่อนตาก {Weighing1Before} กก.
+          น้ำหนักก่อนตาก {Weighing1BeforeSet.toFixed(2)} กก.
         </div>
         <div>
           <Image
@@ -66,7 +75,15 @@ const StapleValue1 = () => {
             preview={false}
             src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
           />
-          น้ำหนักหลังตาก {Weighing1Behind} กก.
+          น้ำหนักหลังตาก {Weighing1BehindSet.toFixed(2)} กก.
+        </div>
+        <div>
+          <Image
+            width={20}
+            preview={false}
+            src="https://cdn-icons-png.flaticon.com/512/6178/6178480.png"
+          />
+          น้ำหนักปัจจุบัน {averageWeight_1.toFixed(2)} กก.
         </div>
       </div>
     </div>

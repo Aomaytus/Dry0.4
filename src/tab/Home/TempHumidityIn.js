@@ -1,34 +1,38 @@
 import React, { useState, useEffect } from "react";
 import {
   Progress,
-  Space,
-  Modal,
-  Button,
-  Col,
-  InputNumber,
-  Row,
-  Slider,
 } from "antd";
 import { db } from "../../firebase";
 import { set, ref, onValue, update, remove } from "firebase/database";
-var InHum,InTemp;
+var InHum, InTemp;
 
 const TempHumidityIn = () => {
-  
   const [todo, setTodo] = useState();
   const [todos, setTodos] = useState();
-  useEffect(() => {
+  function getdeta() {
     onValue(ref(db), (snapshot) => {
       setTodos([]);
       const data = snapshot.val();
       InTemp = data.Fram.InTemp;
-      InHum = data.Fram.InHum;
-      if (data !== null) {
-        Object.values(data).map((todo) => {
-          setTodos((oldArray) => [...oldArray, todo]);
-        });
+      if (InTemp >= 80 || InTemp <= 15) {
+        InTemp = 0;
       }
+      InHum = data.Fram.InHum;
+      if (InHum <= 0 || InHum >= 99) {
+        InHum = 0;
+      }
+    
+      // if (data !== null) {
+      //   Object.values(data).map((todo) => {
+      //     setTodos((oldArray) => [...oldArray, todo]);
+      //   });
+      // }
     });
+
+  }
+  useEffect(() => {
+    getdeta();
+
   }, []);
   return (
     <div className="dry-body">
@@ -56,7 +60,7 @@ const TempHumidityIn = () => {
               width={50}
               format={(percent) => `${percent} %`}
             />
-            <div style={{ marginTop: "2px", marginBottom: "2px" }}>
+            <div style={{ marginTop: "2px", marginBottom: "10px" }}>
               ความชื้น
             </div>
           </div>

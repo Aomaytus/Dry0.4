@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Progress,
-  Space,
-  Modal,
-  Button,
-  Col,
-  InputNumber,
-  Row,
-  Slider,
-  Image,
   Carousel,
 } from "antd";
-import { db } from "../../firebase";
-import { set, ref, onValue, update, remove } from "firebase/database";
 import FanView from "./FanView";
 import HeaterView from "./HeaterView";
 const contentStyle = {
@@ -23,12 +12,9 @@ const contentStyle = {
   textAlign: "center",
   borderRadius: "10px",
   display: "flex",
-  
 };
-
 var HeaterPercentage;
 const StatusIO = () => {
-  
   const onChange = (currentSlide) => {
     console.log(currentSlide);
   };
@@ -38,8 +24,8 @@ const StatusIO = () => {
         <div className="BT_View_ON_OFF"> สถานะอุปกรณ์ในระบบ</div>
         <Carousel afterChange={onChange}>
           <div>
-            <div style={{justifyContent:'space-around',display:'flex'}}>
-             <HeaterView/>
+            <div style={{ justifyContent: 'space-around', display: 'flex' }}>
+              <HeaterView />
               <div>
                 <FanView />
               </div>
@@ -50,5 +36,4 @@ const StatusIO = () => {
     </div>
   );
 };
-
 export default StatusIO;

@@ -3,10 +3,7 @@ import { Tabs } from "antd";
 import Home from "../Home/Home";
 import Dry from "../Dry/Dry";
 import Setting from "../Setting/Setting";
-import { FcHome } from "react-icons/fc";
-import { FcSupport } from "react-icons/fc";
 import { Image } from "antd";
-import { FcAddDatabase } from "react-icons/fc";
 const Nav = () => {
   const add = "add";
   const onChange = (key) => {
